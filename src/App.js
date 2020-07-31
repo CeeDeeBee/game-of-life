@@ -7,7 +7,7 @@ function App() {
 	const grid = useRef(null);
 	// normalize width and height to exactaly fit tiles
 	const xTiles = Math.floor((window.innerWidth * 0.9) / 20);
-	const yTiles = Math.floor((window.innerHeight * 0.9) / 20);
+	const yTiles = Math.floor((window.innerHeight * 0.85) / 20);
 	const width = xTiles * 20;
 	const height = yTiles * 20;
 	const [tiles, setTiles] = useState(new Array(xTiles * yTiles).fill(false));
@@ -15,6 +15,7 @@ function App() {
 	const [generation, setGeneration] = useState(0);
 	const [running, setRunning] = useState(false);
 	const [speed, setSpeed] = useState(1000);
+	const [shouldDraw, setShouldDraw] = useState(false);
 	const neighbors = [
 		-(xTiles - 1),
 		-xTiles,
@@ -33,6 +34,13 @@ function App() {
 	useEffect(() => {
 		if (ctx) initGrid();
 	}, [ctx]);
+
+	useEffect(() => {
+		if (shouldDraw) {
+			drawTiles();
+			setShouldDraw(false);
+		}
+	}, [tiles]);
 
 	const initGrid = () => {
 		// draw vertical lines
@@ -131,7 +139,7 @@ function App() {
 	}, speed);
 
 	const startAnimation = () => {
-		runGame();
+		// runGame();
 		setRunning(true);
 	};
 
@@ -148,11 +156,14 @@ function App() {
 			}
 		}
 		setTiles(newTiles);
-		drawTiles();
+		setShouldDraw(true);
 	};
 
 	return (
 		<div className="App">
+			<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">
+				About Conway's Game of Life
+			</a>
 			<canvas
 				className="grid"
 				ref={grid}
